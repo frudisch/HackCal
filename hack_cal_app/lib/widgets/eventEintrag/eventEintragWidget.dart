@@ -10,9 +10,6 @@ class EventEintragWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Ausgabe!!!');
-    print(event);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

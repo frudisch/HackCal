@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import "package:pull_to_refresh/pull_to_refresh.dart";
 
 import '../../model/event.dart';
 import '../../service/eventService.dart';
@@ -6,48 +7,42 @@ import '../eventEintrag/eventEintragWidget.dart';
 import 'anzeigeWidget.dart';
 
 class AnzeigeState extends State<AnzeigeWidget> {
-  final TextStyle biggerFont = const TextStyle(fontSize: 18.0);
-  final EventService eventService = EventService();
+  final EventService _eventService = EventService();
+  final RefreshController _refreshController = RefreshController();
 
-  Future<List<Event>> _request;
-  List<Event> _events = <Event>[];
+  List<Event> _events = [];
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _request = eventService.getEvents();
+  void initState() {
+    super.initState();
+    _eventService.getEvents().then((result) => _events = result);
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Event>>(
-      future: _request,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          _events = snapshot.data;
-          return _buildAnzeige();
-        } else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
-        return CircularProgressIndicator();
-      },
+    return SmartRefresher(
+      enablePullDown: true,
+      enablePullUp: false,
+      controller: _refreshController,
+      onRefresh: _refresh,
+      child: ListView.builder(
+          padding: const EdgeInsets.all(16.0),
+          itemCount: 2 * _events.length - 1,
+          itemBuilder: (BuildContext _context, int i) {
+            if (i.isOdd) {
+              return const Divider();
+            }
+            final int index = i ~/ 2;
+            return EventEintragWidget(event: _events[index]);
+          }),
     );
   }
 
-  Widget _buildAnzeige() {
-    final Iterable<ListTile> tiles = _events.map(
-      (Event event) {
-        return ListTile(
-          title: EventEintragWidget(
-            event: event,
-          ),
-        );
-      },
-    );
-    final List<Widget> divided = ListTile.divideTiles(
-      context: context,
-      tiles: tiles,
-    ).toList();
-    return ListView(children: divided);
+  _refresh(bool up) async {
+    List<Event> result = await _eventService.getEvents();
+    setState(() {
+      _events = result;
+    });
+    _refreshController.sendBack(up, RefreshStatus.completed);
   }
 }

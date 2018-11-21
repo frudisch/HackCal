@@ -8,7 +8,8 @@ class EventService {
   final String EVENT_URL = 'http://localhost:5000/event';
 
   Future<List<Event>> getEvents() async {
-    return await [
+    await Future.delayed(const Duration(milliseconds: 2000));
+    return [
       Event(
           uuid: 'uuid',
           name: 'name',
@@ -17,7 +18,7 @@ class EventService {
       Event(
           uuid: 'uuid2',
           name: 'name2',
-          date: DateTime(2018, 11, 23, 17, 50),
+          date: DateTime.now(),
           description: 'Andere Beschreibung')
     ];
 
