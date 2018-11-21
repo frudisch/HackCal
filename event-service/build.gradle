@@ -13,9 +13,11 @@ repositories {
 }
 
 dependencies {
-    compile group: 'io.helidon.webserver', name: 'helidon-webserver', version: '0.10.5'
+    compile 'io.helidon.webserver:helidon-webserver:0.10.5'
     compile 'io.helidon.webserver:helidon-webserver-json:0.10.5'
-    compile group: 'io.helidon.microprofile.server', name: 'helidon-microprofile-server', version: '0.10.5'
+    compile 'io.helidon.microprofile.server:helidon-microprofile-server:0.10.5'
+    compile 'org.mongodb:mongodb-driver-sync:3.9.0'
+
     compileOnly 'org.projectlombok:lombok:1.18.4'
 
     apt 'org.projectlombok:lombok:1.18.4'

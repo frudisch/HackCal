@@ -1,6 +1,8 @@
 package com.senacor.hacking.days.event.service;
 
-import com.senacor.hacking.days.event.service.handler.EventService;
+import com.senacor.hacking.days.event.service.handler.EventHandler;
+import com.senacor.hacking.days.event.service.repository.MongoDB;
+import com.senacor.hacking.days.event.service.service.EventService;
 import io.helidon.webserver.Routing;
 import io.helidon.webserver.ServerConfiguration;
 import io.helidon.webserver.WebServer;
@@ -12,9 +14,19 @@ import java.util.concurrent.TimeoutException;
 
 public class Application {
 
+    private final MongoDB mongoDB;
+    private final EventService eventService;
+    private final EventHandler eventHandler;
+
+    Application() {
+        mongoDB = new MongoDB();
+        eventService = new EventService(mongoDB);
+        eventHandler = new EventHandler(eventService);
+    }
+
     private Routing createRouting() {
         return Routing.builder()
-                .register("/event", new EventService())
+                .register("/event", eventHandler)
                 .build();
     }
 

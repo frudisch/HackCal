@@ -5,7 +5,8 @@ import lombok.Data;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Data
@@ -16,14 +17,14 @@ public class Event {
 
     private String name;
 
-    private LocalDate date;
+    private LocalDateTime date;
 
     private String description;
 
     public static Event toEvent(JsonObject jsonObject) {
         return Event.builder()
                 .name(jsonObject.getString("name"))
-                .date(null)
+                .date(LocalDateTime.parse(jsonObject.getString("date"), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .description(jsonObject.getString("description"))
                 .build();
     }
@@ -32,7 +33,7 @@ public class Event {
         return Json.createObjectBuilder()
                 .add("uuid", event.getUuid().toString())
                 .add("name", event.getName())
-                .add("date", LocalDate.of(2018, 11, 20).toString())
+                .add("date", event.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .add("description", event.getDescription())
                 .build();
     }
