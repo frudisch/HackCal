@@ -28,7 +28,7 @@ class EventService {
     if (response.statusCode == 200) {
       return json.decode(response.body).map((i) => Event.fromJson(i)).toList();
     } else {
-      throw Exception('Failed to load: GET ' + url);
+      throw Exception('Failed to load: GET ${url}');
     }
   }
 
@@ -45,7 +45,19 @@ class EventService {
     if (response.statusCode == 200) {
       return Event.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to load: GET ' + url);
+      throw Exception('Failed to load: GET ${url}');
+    }
+  }
+
+  addEvent(Event event) async {
+    print('Received Event: ${event.toJson()}');
+    return;
+
+    final String url = EVENT_URL;
+    final response = await http.put(url, body: event.toJson());
+
+    if (response.statusCode >= 300) {
+      throw Exception('Failed to load: PUT ${url}');
     }
   }
 }

@@ -6,17 +6,20 @@ import com.senacor.hacking.days.event.service.service.EventService;
 import io.helidon.webserver.Routing;
 import io.helidon.webserver.ServerConfiguration;
 import io.helidon.webserver.WebServer;
+import lombok.Getter;
 
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+@Getter
 public class Application {
 
     private final MongoDB mongoDB;
     private final EventService eventService;
     private final EventHandler eventHandler;
+    private WebServer webServer;
 
     Application() {
         mongoDB = new MongoDB();
@@ -30,12 +33,12 @@ public class Application {
                 .build();
     }
 
-    private void startServer() throws InterruptedException, ExecutionException, TimeoutException, UnknownHostException {
+    void startServer() throws InterruptedException, ExecutionException, TimeoutException, UnknownHostException {
         ServerConfiguration configuration = ServerConfiguration.builder()
                 .port(10000)
                 .build();
 
-        WebServer webServer = WebServer
+        webServer = WebServer
                 .create(configuration, createRouting())
                 .start()
                 .toCompletableFuture()
