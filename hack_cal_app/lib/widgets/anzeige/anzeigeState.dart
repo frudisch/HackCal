@@ -33,7 +33,10 @@ class AnzeigeState extends State<AnzeigeWidget> {
         enablePullDown: true,
         enablePullUp: false,
         controller: _refreshController,
-        onRefresh: _refresh,
+        onRefresh: (up) {
+          _refresh();
+          _refreshController.sendBack(up, RefreshStatus.completed);
+        },
         child: ListView.builder(
             padding: const EdgeInsets.all(16.0),
             itemCount: 2 * _events.length - 1,
@@ -53,21 +56,17 @@ class AnzeigeState extends State<AnzeigeWidget> {
     );
   }
 
-  _refresh(bool up) async {
+  _refresh() async {
     List<Event> result = await _eventService.getEvents();
     setState(() {
       _events = result;
     });
-    _refreshController.sendBack(up, RefreshStatus.completed);
   }
 
   _addEvent() {
-    Navigator.of(context).push(
-      new MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          return NeuesEventWidget();
-        },
-      ),
-    );
+    Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => NeuesEventWidget()),
+    ).then((value) => _refresh());
   }
 }
