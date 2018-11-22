@@ -1,4 +1,5 @@
 import 'package:hack_cal_app/model/event.dart';
+import 'package:hack_cal_app/model/user.dart';
 
 class FetchAllEventsAction {}
 
@@ -18,4 +19,32 @@ class RemoveEventAction {
   final Event event;
 
   RemoveEventAction(this.event);
+}
+
+class FetchAllUserAction {}
+
+class AllUserLoadedAction {
+  final List<User> user;
+
+  AllUserLoadedAction(this.user);
+}
+
+class FetchMembersForEvent {
+  final String event;
+
+  FetchMembersForEvent(this.event);
+}
+
+class AllMembersForEventLoadedAction {
+  final String event;
+  final List<String> members;
+
+  AllMembersForEventLoadedAction({this.event, this.members});
+}
+
+class SaveMembersForEventAction {
+  final String event;
+  final List<String> members;
+
+  SaveMembersForEventAction({this.event, this.members});
 }

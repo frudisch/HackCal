@@ -30,7 +30,10 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: StoreBuilder<AppState>(
-            onInit: (store) => store.dispatch(FetchAllEventsAction()),
+            onInit: (store) {
+              store.dispatch(FetchAllEventsAction());
+              store.dispatch(FetchAllUserAction());
+            },
             builder: (context, store) => AnzeigeWidget(store)),
       ),
     );

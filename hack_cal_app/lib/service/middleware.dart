@@ -23,13 +23,29 @@ void storeEventsMiddleware(Store<AppState> store, action, NextDispatcher next) {
     removeEvent(action.event)
         .catchError(() => store.dispatch(FetchAllEventsAction()));
   }
+
+  if (action is FetchAllUserAction) {
+    loadUser()
+        .then((state) => store.dispatch(AllUserLoadedAction(state.userList)));
+  }
+
+  if (action is FetchMembersForEvent) {
+    String uuid = action.event;
+    loadMember(uuid).then((state) => store.dispatch(
+        AllMembersForEventLoadedAction(
+            event: uuid, members: state.members[uuid])));
+  }
+  if (action is SaveMembersForEventAction) {
+    saveMember(action.event, action.members)
+        .catchError(() => store.dispatch(FetchMembersForEvent(action.event)));
+  }
 }
 
 Future<AppState> loadEvents() async {
   final response = await http.get(eventUrl);
 
   if (response.statusCode == 200) {
-    return AppState.fromJson(json.decode(response.body), new List());
+    return AppState.fromJson(events: json.decode(response.body));
   }
   return Future.error('Failed to load: GET ${eventUrl}');
 }
@@ -51,4 +67,35 @@ Future<void> removeEvent(Event event) async {
     return Future.value();
   }
   return Future.error('Failed to load: DELETE ${url}');
+}
+
+Future<AppState> loadUser() async {
+  final response = await http.get(eventUrl);
+
+  if (response.statusCode == 200) {
+    return AppState.fromJson(user: json.decode(response.body));
+  }
+  return Future.error('Failed to load: GET ${eventUrl}');
+}
+
+Future<AppState> loadMember(String eventUuid) async {
+  String url = '${eventUrl}/${eventUuid}/member';
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    Map<String, List<String>> map = new Map();
+    map[eventUuid] = json.decode(response.body);
+    return AppState.fromJson(members: map);
+  }
+  return Future.error('Failed to load: GET ${url}');
+}
+
+Future<void> saveMember(String eventUuid, List<String> member) async {
+  String url = '${eventUrl}/${eventUuid}/member';
+  final response = await http.post(url, body: json.encode(member));
+
+  if (response.statusCode == 201) {
+    return Future.value();
+  }
+  return Future.error('Failed to load: POST ${url}');
 }

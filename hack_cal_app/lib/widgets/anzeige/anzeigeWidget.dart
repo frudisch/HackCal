@@ -23,7 +23,7 @@ class AnzeigeWidget extends StatelessWidget {
       body: _buildEventList(),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () => _openAddItemDialog(context),
+        onPressed: () => _openNeuesEventDialog(context),
       ),
     );
   }
@@ -56,7 +56,7 @@ class AnzeigeWidget extends StatelessWidget {
     );
   }
 
-  _openAddItemDialog(BuildContext context) {
+  _openNeuesEventDialog(BuildContext context) {
     showDialog(context: context, builder: (context) => NeuesEventWidget());
   }
 }

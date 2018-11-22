@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hack_cal_app/model/appstate.dart';
 import 'package:hack_cal_app/model/event.dart';
 import 'package:hack_cal_app/service/actions.dart';
+import 'package:hack_cal_app/widgets/einladen/einladenWidget.dart';
 
 class EventEintragWidget extends StatelessWidget {
   final Event event;
@@ -53,7 +54,7 @@ class EventEintragDialogWidget extends StatelessWidget {
           caption: 'Einladen',
           color: Colors.indigo,
           icon: Icons.share,
-//          onTap: () => TODO,
+          onTap: () => _openEinladenDialog(context),
         ),
       ],
       secondaryActions: <Widget>[
@@ -65,6 +66,10 @@ class EventEintragDialogWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  _openEinladenDialog(BuildContext context) {
+    showDialog(context: context, builder: (context) => EinladenWidget(event));
   }
 }
 

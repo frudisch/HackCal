@@ -3,6 +3,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:hack_cal_app/model/appstate.dart';
 import 'package:hack_cal_app/model/event.dart';
 import 'package:hack_cal_app/model/user.dart';
+import 'package:hack_cal_app/service/actions.dart';
 import 'package:hack_cal_app/widgets/einladen/einladenEventDetailsWidget.dart';
 import 'package:hack_cal_app/widgets/einladen/einladenTeilnehmerWidget.dart';
 
@@ -14,7 +15,8 @@ class EinladenWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new StoreConnector<AppState, OnSaveCallback>(converter: (store) {
-      return (event, teilnehmer) => store.dispatch(null /* TODO */);
+      return (event, teilnehmer) => store.dispatch(SaveMembersForEventAction(
+          event: event.uuid, members: teilnehmer.map((u) => u.uuid).toList()));
     }, builder: (context, callback) {
       return EinladenDialogWidget(event, callback: callback);
     });
@@ -24,8 +26,11 @@ class EinladenWidget extends StatelessWidget {
 class EinladenDialogWidget extends StatelessWidget {
   final OnSaveCallback callback;
   final Event event;
+  EinladenTeilnehmerWidget _einladenTeilnehmerWidget;
 
-  EinladenDialogWidget(this.event, {this.callback});
+  EinladenDialogWidget(this.event, {this.callback}) {
+    _einladenTeilnehmerWidget = EinladenTeilnehmerWidget(event);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +44,12 @@ class EinladenDialogWidget extends StatelessWidget {
           child: ListView(children: <Widget>[
             EinladenEventDetailsWidget(event),
             SizedBox(height: 22.0),
-            EinladenTeilnehmerWidget(
-              event: event,
-              alleUser: null /*TODO*/,
-            )
+            _einladenTeilnehmerWidget
           ]),
         ),
       ),
       floatingActionButton: new FloatingActionButton(
-        onPressed: callback(event, null /* TODO */),
+        onPressed: callback(event, _einladenTeilnehmerWidget.getTeilnehmer()),
         tooltip: 'Teilnehmer speichern',
         child: new Icon(Icons.save),
       ),
