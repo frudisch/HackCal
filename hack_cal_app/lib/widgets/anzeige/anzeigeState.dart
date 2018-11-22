@@ -33,19 +33,18 @@ class AnzeigeState extends State<AnzeigeWidget> {
         enablePullDown: true,
         enablePullUp: false,
         controller: _refreshController,
-        onRefresh: (up) {
-          _refresh();
+        onRefresh: (up) async {
+          await _refresh();
           _refreshController.sendBack(up, RefreshStatus.completed);
         },
         child: ListView.builder(
-            padding: const EdgeInsets.all(16.0),
             itemCount: 2 * _events.length - 1,
             itemBuilder: (BuildContext _context, int i) {
               if (i.isOdd) {
                 return const Divider();
               }
               final int index = i ~/ 2;
-              return EventEintragWidget(event: _events[index]);
+              return EventEintragWidget(parent: this, event: _events[index]);
             }),
       ),
       floatingActionButton: new FloatingActionButton(
@@ -68,5 +67,18 @@ class AnzeigeState extends State<AnzeigeWidget> {
       context,
       new MaterialPageRoute(builder: (context) => NeuesEventWidget()),
     ).then((value) => _refresh());
+  }
+
+  deleteEvent(Event event) {
+    setState(() {
+      _events.remove(event);
+    });
+
+    try {
+      _eventService.deleteEvent(event);
+    } catch (e) {
+      print('Exception: ${e}');
+      _refresh();
+    }
   }
 }

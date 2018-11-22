@@ -19,7 +19,17 @@ class EventService {
           uuid: 'uuid2',
           name: 'name2',
           date: DateTime.now(),
-          description: 'Andere Beschreibung')
+          description: 'Andere Beschreibung'),
+      Event(
+          uuid: 'uuid21',
+          name: 'name3',
+          date: DateTime.now(),
+          description: 'Andere Beschreibung'),
+      Event(
+          uuid: 'uuid3',
+          name: 'name event',
+          date: DateTime.now().add(Duration(days: 7)),
+          description: 'Nochmal eine andere Beschreibung')
     ];
 
     final String url = EVENT_URL;
@@ -32,14 +42,15 @@ class EventService {
     }
   }
 
-  Future<Event> getEvent(int id) async {
-    return await Event(
-        uuid: 'uuid',
+  Future<Event> getEvent(String uuid) async {
+    await Future.delayed(const Duration(milliseconds: 2000));
+    return Event(
+        uuid: uuid,
         name: 'name',
         date: DateTime(2018, 11, 21, 15, 59),
         description: 'Beschreibung');
 
-    final String url = EVENT_URL + '/' + id.toString();
+    final String url = EVENT_URL + '/' + uuid;
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -51,6 +62,7 @@ class EventService {
 
   addEvent(Event event) async {
     print('Received Event: ${event.toJson()}');
+    await Future.delayed(const Duration(milliseconds: 2000));
     return;
 
     final String url = EVENT_URL;
@@ -58,6 +70,19 @@ class EventService {
 
     if (response.statusCode >= 300) {
       throw Exception('Failed to load: PUT ${url}');
+    }
+  }
+
+  deleteEvent(Event event) async {
+    print('Delete Event: ${event.toJson()}');
+    await Future.delayed(const Duration(milliseconds: 2000));
+    return;
+
+    final String url = EVENT_URL + '/' + event.uuid;
+    final response = await http.delete(url);
+
+    if (response.statusCode >= 300) {
+      throw Exception('Failed to load: DELETE ${url}');
     }
   }
 }
