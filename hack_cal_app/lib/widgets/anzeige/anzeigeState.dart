@@ -16,7 +16,11 @@ class AnzeigeState extends State<AnzeigeWidget> {
   @override
   void initState() {
     super.initState();
-    _eventService.getEvents().then((result) => _events = result);
+    _eventService.getEvents().then((result) {
+      setState(() {
+        _events = result;
+      });
+    });
   }
 
   @override

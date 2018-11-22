@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../model/event.dart';
 import '../../service/eventService.dart';
@@ -49,6 +50,7 @@ class NeuesEventState extends State<NeuesEventWidget> {
 
   _save(BuildContext context) {
     Event event = Event(
+        uuid: Uuid().v1(),
         name: _nameField.getTextValue(),
         date: _datetimeField.getValue(),
         description: _descriptionField.getTextValue());

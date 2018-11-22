@@ -26,7 +26,6 @@ class DatetimeInputFieldWidget extends StatelessWidget {
           style: _inputFontStyle,
           validator: required
               ? (value) {
-                  print('VALUE: ${value}');
                   if (value == null) {
                     return 'Bitte gebe ein Datum an.';
                   }
@@ -38,7 +37,6 @@ class DatetimeInputFieldWidget extends StatelessWidget {
   }
 
   getValue() {
-    //TODO parse to Datetime
-    return _controller.text.isEmpty ? null : _controller.text;
+    return dateFormat.parse(_controller.text);
   }
 }
