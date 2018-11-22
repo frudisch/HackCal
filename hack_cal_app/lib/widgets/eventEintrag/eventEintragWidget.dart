@@ -45,7 +45,7 @@ class EventEintragWidget extends StatelessWidget {
           caption: 'Löschen',
           color: Colors.red,
           icon: Icons.delete,
-          onTap: () => _delete(),
+          // onTap: () => _delete(),
         ),
       ],
     );
@@ -56,7 +56,7 @@ class EventEintragWidget extends StatelessWidget {
         MaterialPageRoute(builder: (context) => EinladenWidget(event: event)));
   }
 
-  _delete() {
-    parent.deleteEvent(event);
-  }
+  //_delete() {
+  //  parent.deleteEvent(event);
+  //}
 }

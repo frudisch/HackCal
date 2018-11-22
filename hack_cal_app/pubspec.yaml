@@ -24,6 +24,8 @@ dependencies:
   datetime_picker_formfield: ^0.1.6
   uuid: ^1.0.0
   flutter_slidable: ^0.4.9
+  flutter_redux: ^0.5.2
+  flutter_redux_dev_tools: ^0.3.0
   autocomplete_textfield: ^1.5.1
 
 dev_dependencies:

@@ -7,7 +7,7 @@ import '../eventEintrag/eventEintragWidget.dart';
 import '../neuesEvent/neuesEventWidget.dart';
 import 'anzeigeWidget.dart';
 
-class AnzeigeState extends State<AnzeigeWidget> {
+class AnzeigeState extends State {
   final EventService _eventService = EventService();
   final RefreshController _refreshController = RefreshController();
 

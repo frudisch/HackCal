@@ -1,18 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:hack_cal_app/model/appstate.dart';
+import 'package:hack_cal_app/model/event.dart';
+import 'package:hack_cal_app/service/actions.dart';
+import 'package:redux/redux.dart';
 
+import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'widgets/anzeige/anzeigeWidget.dart';
 
-void main() => runApp(MyApp());
+import 'package:hack_cal_app/service/middleware.dart';
+import 'package:hack_cal_app/service/reducers.dart';
+
+void main(){
+  final store = new Store<AppState>(
+      appStateReducers,
+      initialState: AppState.empty, middleware: [storeEventsMiddleware]);
+
+  runApp(MyApp(store));
+}
 
 class MyApp extends StatelessWidget {
+  final Store<AppState> store;
+
+  MyApp(this.store);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Hack Calendar',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return new StoreProvider<AppState>(
+      store: store,
+      child: new MaterialApp(
+        title: 'Hack Calendar',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: new StoreBuilder<AppState>(
+            onInit: (store) => store.dispatch(new FetchAllEventsAction()),
+            builder: (context, store) => new AnzeigeWidget(store)),
       ),
-      home: new AnzeigeWidget(),
     );
   }
 }
