@@ -65,7 +65,7 @@ class AnzeigeState extends State<AnzeigeWidget> {
   _addEvent() {
     Navigator.push(
       context,
-      new MaterialPageRoute(builder: (context) => NeuesEventWidget()),
+      MaterialPageRoute(builder: (context) => NeuesEventWidget()),
     ).then((value) => _refresh());
   }
 

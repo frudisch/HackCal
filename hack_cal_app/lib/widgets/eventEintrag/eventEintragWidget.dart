@@ -3,6 +3,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../model/event.dart';
 import '../anzeige/anzeigeState.dart';
+import '../einladen/einladenWidget.dart';
 
 class EventEintragWidget extends StatelessWidget {
   final TextStyle _biggerFont = const TextStyle(fontSize: 22.0);
@@ -36,7 +37,7 @@ class EventEintragWidget extends StatelessWidget {
           caption: 'Einladen',
           color: Colors.indigo,
           icon: Icons.share,
-          onTap: () => _invite(),
+          onTap: () => _invite(context),
         ),
       ],
       secondaryActions: <Widget>[
@@ -50,8 +51,9 @@ class EventEintragWidget extends StatelessWidget {
     );
   }
 
-  _invite() {
-    //TODO
+  _invite(context) {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => EinladenWidget(event: event)));
   }
 
   _delete() {

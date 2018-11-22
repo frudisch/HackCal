@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../model/event.dart';
+import '../model/user.dart';
 
 class EventService {
   final String EVENT_URL = 'http://localhost:5000/event';
@@ -55,6 +56,20 @@ class EventService {
 
     if (response.statusCode == 200) {
       return Event.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load: GET ${url}');
+    }
+  }
+
+  Future<List<User>> getTeilnehmerVonEvent(String uuid) async {
+    await Future.delayed(const Duration(milliseconds: 2000));
+    return [User(name: 'Vorname Nachname'), User(name: 'Bester Freund')];
+
+    final String url = EVENT_URL + '/' + uuid + '/teilnehmer';
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body).map((i) => User.fromJson(i)).toList();
     } else {
       throw Exception('Failed to load: GET ${url}');
     }
