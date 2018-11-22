@@ -12,7 +12,7 @@ class EinladenEventDetailsWidget extends StatelessWidget {
 
   final Event event;
 
-  EinladenEventDetailsWidget({this.event});
+  EinladenEventDetailsWidget(this.event);
 
   @override
   Widget build(BuildContext context) {

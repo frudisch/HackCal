@@ -3,7 +3,7 @@ import 'package:hack_cal_app/service/actions.dart';
 
 AppState appStateReducers(AppState state, dynamic action) {
   if (action is AllEventsLoadedAction) {
-    return loadEvents(action);
+    return loadEvents(state, action);
   }
   if (action is CreateEventAction) {
     return createEvent(state, action);
@@ -14,8 +14,8 @@ AppState appStateReducers(AppState state, dynamic action) {
   return state;
 }
 
-AppState loadEvents(AllEventsLoadedAction action) {
-  return new AppState(action.events);
+AppState loadEvents(AppState state, AllEventsLoadedAction action) {
+  return AppState(eventList: action.events, userList: state.userList);
 }
 
 AppState createEvent(AppState state, CreateEventAction action) {

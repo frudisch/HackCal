@@ -29,7 +29,7 @@ Future<AppState> loadEvents() async {
   final response = await http.get(eventUrl);
 
   if (response.statusCode == 200) {
-    return AppState.fromJson(json.decode(response.body));
+    return AppState.fromJson(json.decode(response.body), new List());
   }
   return Future.error('Failed to load: GET ${eventUrl}');
 }
