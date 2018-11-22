@@ -7,7 +7,6 @@ class Event {
   Event({this.uuid, this.name, this.date, this.description});
 
   factory Event.fromJson(Map<String, dynamic> json) {
-    print(json);
     return Event(
       uuid: json['uuid'],
       name: json['name'],
@@ -19,7 +18,7 @@ class Event {
   Map<String, dynamic> toJson() => {
         'uuid': uuid,
         'name': name,
-        'date': date != null ? date.toString() : null,
+        'date': date != null ? date.toIso8601String() : null,
         'description': description,
       };
 }

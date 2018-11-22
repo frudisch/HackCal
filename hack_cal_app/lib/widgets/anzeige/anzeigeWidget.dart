@@ -2,60 +2,61 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:hack_cal_app/model/appstate.dart';
 import 'package:hack_cal_app/model/event.dart';
+import 'package:hack_cal_app/service/actions.dart';
+import 'package:hack_cal_app/widgets/eventEintrag/eventEintragWidget.dart';
+import 'package:hack_cal_app/widgets/neuesEvent/neuesEventWidget.dart';
+import "package:pull_to_refresh/pull_to_refresh.dart";
 import 'package:redux/redux.dart';
-import 'package:redux_dev_tools/redux_dev_tools.dart';
 
 class AnzeigeWidget extends StatelessWidget {
-
   final Store<AppState> store;
+  final RefreshController _refreshController = RefreshController();
 
   AnzeigeWidget(this.store);
 
   @override
   Widget build(BuildContext context) {
-    print(store);
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Hack Calendar'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Hack Calendar'),
       ),
-      body: new EventList(),
-      floatingActionButton: new FloatingActionButton(
-        child: new Icon(Icons.add),
+      body: _buildEventList(),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () => _openAddItemDialog(context),
       ),
     );
   }
-}
 
-class EventList extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return new StoreConnector<AppState, List<Event>>(
+  _buildEventList() {
+    return StoreConnector<AppState, List<Event>>(
       converter: (store) => store.state.eventList,
       builder: (context, list) {
-        print(list);
-        return new ListView.builder(
-            itemCount: list.length,
-            itemBuilder: (context, position) =>
-            new EventListItem(list[position]));
+        return Padding(
+            padding: const EdgeInsets.only(top: 5.0),
+            child: SmartRefresher(
+              enablePullDown: true,
+              enablePullUp: false,
+              controller: _refreshController,
+              onRefresh: (up) {
+                store.dispatch(FetchAllEventsAction());
+                _refreshController.sendBack(up, RefreshStatus.completed);
+              },
+              child: ListView.builder(
+                  itemCount: 2 * list.length - 1,
+                  itemBuilder: (BuildContext _context, int i) {
+                    if (i.isOdd) {
+                      return const Divider();
+                    }
+                    final int index = i ~/ 2;
+                    return EventEintragWidget(list[index]);
+                  }),
+            ));
       },
     );
   }
-}
 
-class EventListItem extends StatelessWidget {
-  final Event event;
-
-  EventListItem(this.event);
-
-  @override
-  Widget build(BuildContext context) {
-    return new ListTile(
-      title: new Text(event.name),
-    );
+  _openAddItemDialog(BuildContext context) {
+    showDialog(context: context, builder: (context) => NeuesEventWidget());
   }
 }
-
-typedef OnStateChanged = Function(Event item);
-
-typedef OnRemoveIconClicked = Function(Event item);
