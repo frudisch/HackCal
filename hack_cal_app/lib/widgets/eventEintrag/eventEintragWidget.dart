@@ -1,16 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-
-import '../../model/event.dart';
-import '../anzeige/anzeigeState.dart';
-import '../einladen/einladenWidget.dart';
+import 'package:hack_cal_app/model/appstate.dart';
+import 'package:hack_cal_app/model/event.dart';
+import 'package:hack_cal_app/service/actions.dart';
 
 class EventEintragWidget extends StatelessWidget {
-  final TextStyle _biggerFont = const TextStyle(fontSize: 22.0);
-  final AnzeigeState parent;
   final Event event;
 
-  EventEintragWidget({this.parent, this.event});
+  EventEintragWidget(this.event);
+
+  @override
+  Widget build(BuildContext context) {
+    return new StoreConnector<AppState, OnDeleteCallback>(converter: (store) {
+      return (event) => store.dispatch(RemoveEventAction(event));
+    }, builder: (context, deleteCallback) {
+      return EventEintragDialogWidget(event, deleteCallback: deleteCallback);
+    });
+  }
+}
+
+class EventEintragDialogWidget extends StatelessWidget {
+  final TextStyle _biggerFont = const TextStyle(fontSize: 22.0);
+
+  final Event event;
+  final OnDeleteCallback deleteCallback;
+
+  EventEintragDialogWidget(this.event, {this.deleteCallback});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +53,7 @@ class EventEintragWidget extends StatelessWidget {
           caption: 'Einladen',
           color: Colors.indigo,
           icon: Icons.share,
-          onTap: () => _invite(context),
+//          onTap: () => TODO,
         ),
       ],
       secondaryActions: <Widget>[
@@ -45,18 +61,11 @@ class EventEintragWidget extends StatelessWidget {
           caption: 'Löschen',
           color: Colors.red,
           icon: Icons.delete,
-          onTap: () => _delete(),
+          onTap: () => deleteCallback(event),
         ),
       ],
     );
   }
-
-  _invite(context) {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => EinladenWidget(event: event)));
-  }
-
-  _delete() {
-    parent.deleteEvent(event);
-  }
 }
+
+typedef OnDeleteCallback = Function(Event event);

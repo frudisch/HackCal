@@ -18,7 +18,7 @@ class Event {
   Map<String, dynamic> toJson() => {
         'uuid': uuid,
         'name': name,
-        'date': date != null ? date.toString() : null,
+        'date': date != null ? date.toIso8601String() : null,
         'description': description,
       };
 }
