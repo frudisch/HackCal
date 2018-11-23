@@ -19,7 +19,7 @@ class DatetimeInputFieldWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('${name}:', style: _descrFontStyle),
+        Text('$name:', style: _descrFontStyle),
         DateTimePickerFormField(
           controller: _controller,
           format: dateFormat,

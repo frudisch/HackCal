@@ -28,12 +28,12 @@ class EinladenDialogWidget extends StatelessWidget {
   final Event event;
   EinladenTeilnehmerWidget _einladenTeilnehmerWidget;
 
-  EinladenDialogWidget(this.event, {this.callback}) {
-    _einladenTeilnehmerWidget = EinladenTeilnehmerWidget(event);
-  }
+  EinladenDialogWidget(this.event, {this.callback});
 
   @override
   Widget build(BuildContext context) {
+    _einladenTeilnehmerWidget = EinladenTeilnehmerWidget(event);
+
     return Scaffold(
       appBar: new AppBar(
         title: const Text('Freunde einladen'),
@@ -49,7 +49,8 @@ class EinladenDialogWidget extends StatelessWidget {
         ),
       ),
       floatingActionButton: new FloatingActionButton(
-        onPressed: callback(event, _einladenTeilnehmerWidget.getTeilnehmer()),
+        onPressed: () =>
+            callback(event, _einladenTeilnehmerWidget.getTeilnehmer()),
         tooltip: 'Teilnehmer speichern',
         child: new Icon(Icons.save),
       ),

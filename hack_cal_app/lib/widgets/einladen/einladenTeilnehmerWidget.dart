@@ -4,7 +4,6 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:hack_cal_app/model/appstate.dart';
 import 'package:hack_cal_app/model/event.dart';
 import 'package:hack_cal_app/model/user.dart';
-import 'package:hack_cal_app/service/actions.dart';
 import 'package:hack_cal_app/widgets/einladen/einladenViewModel.dart';
 
 class EinladenTeilnehmerWidget extends StatelessWidget {
@@ -16,7 +15,6 @@ class EinladenTeilnehmerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new StoreConnector<AppState, EinladenViewModel>(converter: (store) {
-      store.dispatch(FetchMembersForEvent(event.uuid));
       return EinladenViewModel(
           event: event,
           alleUser: store.state.userList,
@@ -34,17 +32,14 @@ class EinladenTeilnehmerWidget extends StatelessWidget {
 
 class EinladenTeilnehmerDialogWidget extends StatefulWidget {
   final EinladenViewModel model;
-  EinladenTeilnehmerDialogState _einladenTeilnehmerDialogState;
 
-  EinladenTeilnehmerDialogWidget(this.model) {
-    _einladenTeilnehmerDialogState = EinladenTeilnehmerDialogState(model);
-  }
+  EinladenTeilnehmerDialogWidget(this.model);
 
   @override
-  State<StatefulWidget> createState() => _einladenTeilnehmerDialogState;
+  State<StatefulWidget> createState() => EinladenTeilnehmerDialogState(model);
 
   List<User> getTeilnehmer() {
-    return _einladenTeilnehmerDialogState.getTeilnehmer();
+    return model.teilnehmer;
   }
 }
 
@@ -56,14 +51,11 @@ class EinladenTeilnehmerDialogState
 
   final GlobalKey<AutoCompleteTextFieldState<User>> key = GlobalKey();
   final EinladenViewModel model;
-  List<User> _neueTeilnehmer;
 
   String currentUserName = "";
   AutoCompleteTextField textField;
 
-  EinladenTeilnehmerDialogState(this.model) {
-    _neueTeilnehmer = model.teilnehmer;
-  }
+  EinladenTeilnehmerDialogState(this.model);
 
   @override
   Widget build(BuildContext context) {
@@ -81,13 +73,14 @@ class EinladenTeilnehmerDialogState
         textSubmitted: _submit,
         itemBuilder: (context, item) {
           return new Padding(
-              padding: EdgeInsets.all(8.0), child: new Text(item.name));
+              padding: EdgeInsets.all(8.0), child: new Text(item.username));
         },
         itemSorter: (a, b) {
           return a.compareTo(b);
         },
         itemFilter: (item, query) {
-          return item.name.startsWith(query) && !_neueTeilnehmer.contains(item);
+          return item.username.toLowerCase().startsWith(query.toLowerCase()) &&
+              !model.teilnehmer.contains(item);
         });
 
     Widget teilnehmer = Padding(
@@ -95,7 +88,7 @@ class EinladenTeilnehmerDialogState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children:
-              _neueTeilnehmer.map((user) => _buildUserWidget(user)).toList(),
+              model.teilnehmer.map((user) => _buildUserWidget(user)).toList(),
         ));
 
     return Column(
@@ -121,12 +114,12 @@ class EinladenTeilnehmerDialogState
           icon: Icon(Icons.remove),
           onPressed: () {
             setState(() {
-              _neueTeilnehmer.remove(user);
+              model.teilnehmer.remove(user);
             });
           },
         ),
         Text(
-          user.name,
+          user.username,
           style: _font,
         )
       ],
@@ -136,7 +129,7 @@ class EinladenTeilnehmerDialogState
   _submit(String username) {
     User current = null;
     model.alleUser.forEach((u) {
-      if (u.name == username) {
+      if (u.username == username) {
         current = u;
       }
     });
@@ -145,13 +138,9 @@ class EinladenTeilnehmerDialogState
     }
 
     setState(() {
-      _neueTeilnehmer.add(current);
+      model.teilnehmer.add(current);
       currentUserName = null;
       textField.clear();
     });
-  }
-
-  getTeilnehmer() {
-    return _neueTeilnehmer;
   }
 }
