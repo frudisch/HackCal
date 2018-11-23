@@ -45,4 +45,11 @@ public class MemberService {
             userRepository.findAndReplaceUser(member, user);
         });
     }
+
+    public void deleteAllMembers(UUID eventId) {
+        userRepository.selectAllUserByEventId(eventId).forEach(user -> {
+            user.getAttendingEvents().remove(eventId);
+            userRepository.findAndReplaceUser(user.getId(), user);
+        });
+    }
 }

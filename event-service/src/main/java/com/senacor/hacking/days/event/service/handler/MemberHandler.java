@@ -28,6 +28,7 @@ public class MemberHandler implements Service {
                 .register(JsonSupport.get())
                 .delete("/{id}", this::deleteMember)
                 .get("/", this::getAllMembers)
+                .delete("/", this::deleteAllMembers)
                 .post("/", Handler.of(JsonObject.class, this::addMember));
     }
 
@@ -41,6 +42,12 @@ public class MemberHandler implements Service {
         String eventId = serverRequest.path().absolute().param("eventId");
         memberService.addMembers(UUID.fromString(eventId), newMembers);
         serverResponse.status(201).send();
+    }
+
+    private void deleteAllMembers(ServerRequest serverRequest, ServerResponse serverResponse) {
+        String eventId = serverRequest.path().absolute().param("eventId");
+        memberService.deleteAllMembers(UUID.fromString(eventId));
+        serverResponse.status(204).send();
     }
 
     private void deleteMember(ServerRequest serverRequest, ServerResponse serverResponse) {
