@@ -1,41 +1,39 @@
 package com.senacor.hacking.days.event.service.service;
 
-import com.senacor.hacking.days.event.service.handler.response.Event;
+import com.senacor.hacking.days.event.service.handler.port.Event;
+import com.senacor.hacking.days.event.service.repository.EventRepository;
 import com.senacor.hacking.days.event.service.repository.MongoDB;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 public class EventService {
 
-    private MongoDB mongoDB;
-
-    public EventService(MongoDB mongoDB) {
-        this.mongoDB = mongoDB;
-    }
-
+    private EventRepository eventRepository;
 
     public void deleteEvent(UUID uuid) {
-        mongoDB.deleteEvent(uuid);
+        eventRepository.deleteEvent(uuid);
     }
 
     public Event updateEvent(UUID uuid, Event event) {
-        return map(mongoDB.findAndReplaceEvent(uuid, map(event)));
+        return map(eventRepository.findAndReplaceEvent(uuid, map(event)));
     }
 
     public Event createEvent(Event event) {
         event.setUuid(UUID.randomUUID());
-        mongoDB.insertEvent(map(event));
+        eventRepository.insertEvent(map(event));
         return event;
     }
 
     public List<Event> getAllEvents() {
-        return mongoDB.selectAllEvents().stream().map(this::map).collect(Collectors.toList());
+        return eventRepository.selectAllEvents().stream().map(this::map).collect(Collectors.toList());
     }
 
     public Event getEventById(UUID uuid) {
-        return map(mongoDB.selectEventByUuid(uuid));
+        return map(eventRepository.selectEventByUuid(uuid));
     }
 
     private Event map(com.senacor.hacking.days.event.service.repository.domain.Event event) {

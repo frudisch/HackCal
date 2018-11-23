@@ -1,4 +1,4 @@
-package com.senacor.hacking.days.event.service.handler.response;
+package com.senacor.hacking.days.event.service.handler.port;
 
 import lombok.Builder;
 import lombok.Data;
@@ -24,8 +24,8 @@ public class Event {
     public static Event toEvent(JsonObject jsonObject) {
         return Event.builder()
                 .name(jsonObject.getString("name"))
-                .date(LocalDateTime.parse(jsonObject.getString("date"), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                .description(jsonObject.getString("description"))
+                .date(LocalDateTime.parse(jsonObject.getString("date")))
+                .description(jsonObject.get("description") != null ? jsonObject.getString("description") : null)
                 .build();
     }
 

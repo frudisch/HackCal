@@ -1,4 +1,4 @@
-package com.senacor.hacking.days.event.service.handler.response;
+package com.senacor.hacking.days.event.service.handler.port;
 
 import lombok.Builder;
 import lombok.Data;

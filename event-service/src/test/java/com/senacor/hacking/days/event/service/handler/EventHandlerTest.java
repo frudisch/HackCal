@@ -1,6 +1,6 @@
 package com.senacor.hacking.days.event.service.handler;
 
-import com.senacor.hacking.days.event.service.handler.response.Event;
+import com.senacor.hacking.days.event.service.handler.port.Event;
 import com.senacor.hacking.days.event.service.service.EventService;
 import io.helidon.webserver.Handler;
 import io.helidon.webserver.Routing;
