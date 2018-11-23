@@ -15,13 +15,15 @@ repositories {
 dependencies {
     compile 'io.helidon.webserver:helidon-webserver:0.10.5'
     compile 'io.helidon.webserver:helidon-webserver-json:0.10.5'
-    compile 'io.helidon.microprofile.server:helidon-microprofile-server:0.10.5'
+    compile 'io.helidon.webserver:helidon-webserver-netty:0.10.5'
+    compile 'io.helidon.security:helidon-security:0.10.5'
+    compile 'io.helidon.security:helidon-security-provider-http-auth:0.10.5'
+    compile 'io.helidon.security:helidon-security-integration-webserver:0.10.5'
     compile 'org.mongodb:mongodb-driver-sync:3.9.0'
 
     compileOnly 'org.projectlombok:lombok:1.18.4'
 
     apt 'org.projectlombok:lombok:1.18.4'
-    testCompile 'io.helidon.webserver:helidon-webserver-netty:0.10.5'
     testCompile 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testCompile 'org.mockito:mockito-core:2.23.4'
     testCompile 'org.assertj:assertj-core:3.11.1'

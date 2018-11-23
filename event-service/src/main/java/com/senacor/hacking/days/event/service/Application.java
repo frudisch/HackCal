@@ -9,8 +9,11 @@ import com.senacor.hacking.days.event.service.repository.MongoDB;
 import com.senacor.hacking.days.event.service.service.EventService;
 import com.senacor.hacking.days.event.service.service.MemberService;
 import com.senacor.hacking.days.event.service.service.UserService;
-import io.helidon.common.http.DataChunk;
-import io.helidon.common.reactive.Flow;
+import io.helidon.security.Security;
+import io.helidon.security.SubjectType;
+import io.helidon.security.provider.httpauth.HttpBasicAuthProvider;
+import io.helidon.security.provider.httpauth.UserStore;
+import io.helidon.security.webserver.WebSecurity;
 import io.helidon.webserver.Routing;
 import io.helidon.webserver.ServerConfiguration;
 import io.helidon.webserver.WebServer;
@@ -18,7 +21,7 @@ import io.helidon.webserver.json.JsonSupport;
 import lombok.Getter;
 
 import javax.json.Json;
-import javax.json.JsonObjectBuilder;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -52,6 +55,9 @@ public class Application {
 
     private Routing createRouting() {
         return Routing.builder()
+                .register(WebSecurity.from(Security.builder()
+                        .addAuthenticationProvider(this::createSecurity)
+                        .build()).securityDefaults(WebSecurity.allowAnonymous()))
                 .register(JsonSupport.get())
                 .error(Exception.class, (req, res, ex) -> {
                     ex.printStackTrace();
@@ -61,6 +67,24 @@ public class Application {
                 .register("/event", eventHandler)
                 .register("/event/{eventId}/member", memberHandler)
                 .register("/user", userHandler)
+                .build();
+    }
+
+    private HttpBasicAuthProvider createSecurity() {
+        return HttpBasicAuthProvider.builder()
+                .realm("helidon")
+                .subjectType(SubjectType.SERVICE)
+                .userStore(login -> Optional.of(new UserStore.User() {
+                    @Override
+                    public String getLogin() {
+                        return "Test";
+                    }
+
+                    @Override
+                    public char[] getPassword() {
+                        return "Test".toCharArray();
+                    }
+                }))
                 .build();
     }
 

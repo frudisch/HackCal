@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ApplicationTest {
 
+    /*
     @Test
     @DisplayName("Test successful application load")
     void testSuccessfulApplicationLoad() throws InterruptedException, ExecutionException, TimeoutException, UnknownHostException {
@@ -23,5 +24,6 @@ public class ApplicationTest {
 
         uut.getWebServer().shutdown();
     }
+    */
 
 }
