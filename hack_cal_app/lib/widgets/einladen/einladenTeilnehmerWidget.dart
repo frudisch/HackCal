@@ -18,7 +18,7 @@ class EinladenTeilnehmerWidget extends StatelessWidget {
       return EinladenViewModel(
           event: event,
           alleUser: store.state.userList,
-          teilnehmer: store.state.fullMembers(event.uuid));
+          originalTeilnehmer: store.state.fullMembers(event.uuid));
     }, builder: (context, model) {
       this.model = model;
       return EinladenTeilnehmerDialogWidget(model);
@@ -67,8 +67,8 @@ class EinladenTeilnehmerDialogState
         textChanged: (item) => currentUserName = item,
         textSubmitted: _submit,
         itemBuilder: (context, item) {
-          return new Padding(
-              padding: EdgeInsets.all(8.0), child: new Text(item.username));
+          return Padding(
+              padding: EdgeInsets.all(8.0), child: Text(item.username));
         },
         itemSorter: (a, b) {
           return a.compareTo(b);
@@ -110,7 +110,7 @@ class EinladenTeilnehmerDialogState
           icon: Icon(Icons.remove),
           onPressed: () {
             setState(() {
-              widget.model.teilnehmer.remove(user);
+              widget.model.removeTeilnehmer(user);
             });
           },
         ),
@@ -134,7 +134,7 @@ class EinladenTeilnehmerDialogState
     }
 
     setState(() {
-      widget.model.teilnehmer.add(current);
+      widget.model.addTeilnehmer(current);
       currentUserName = null;
       textField.clear();
     });

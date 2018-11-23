@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:hack_cal_app/model/appstate.dart';
 import 'package:hack_cal_app/model/event.dart';
-import 'package:hack_cal_app/model/user.dart';
 import 'package:hack_cal_app/service/actions.dart';
 import 'package:hack_cal_app/widgets/einladen/einladenEventDetailsWidget.dart';
 import 'package:hack_cal_app/widgets/einladen/einladenTeilnehmerWidget.dart';
+import 'package:hack_cal_app/widgets/einladen/einladenViewModel.dart';
 
 class EinladenWidget extends StatelessWidget {
   final Event event;
@@ -15,8 +15,10 @@ class EinladenWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new StoreConnector<AppState, OnSaveCallback>(converter: (store) {
-      return (event, teilnehmer) => store.dispatch(SaveMembersForEventAction(
-          event: event.uuid, members: teilnehmer.map((u) => u.uuid).toList()));
+      return (event, model) => store.dispatch(SaveMembersForEventAction(
+          event: event.uuid,
+          members: model.teilnehmer.map((u) => u.uuid).toList(),
+          notMembers: model.nichtTeilnehmer.map((u) => u.uuid).toList()));
     }, builder: (context, callback) {
       return EinladenDialogWidget(event, callback: callback);
     });
@@ -50,7 +52,7 @@ class EinladenDialogWidget extends StatelessWidget {
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: () {
-          callback(event, _einladenTeilnehmerWidget.getTeilnehmer());
+          callback(event, _einladenTeilnehmerWidget.model);
           Navigator.pop(context);
         },
         tooltip: 'Teilnehmer speichern',
@@ -60,4 +62,4 @@ class EinladenDialogWidget extends StatelessWidget {
   }
 }
 
-typedef OnSaveCallback = Function(Event event, List<User> teilnehmer);
+typedef OnSaveCallback = Function(Event event, EinladenViewModel model);

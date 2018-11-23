@@ -41,6 +41,10 @@ void storeEventsMiddleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is SaveMembersForEventAction) {
     saveMember(action.event, action.members)
         .catchError(() => store.dispatch(FetchMembersForEvent(action.event)));
+    action.notMembers.forEach((member) {
+      removeMember(action.event, member)
+          .catchError(() => store.dispatch(FetchMembersForEvent(action.event)));
+    });
   }
 }
 
@@ -115,4 +119,14 @@ Future<void> saveMember(String eventUuid, List<String> member) async {
     return Future.value();
   }
   return Future.error('Failed to load: POST $url');
+}
+
+Future<void> removeMember(String eventUuid, String member) async {
+  String url = '$eventUrl/$eventUuid/member/$member';
+  final response = await http.delete(url);
+
+  if (response.statusCode == 204) {
+    return Future.value();
+  }
+  return Future.error('Failed to load: DELETE $url');
 }

@@ -45,6 +45,7 @@ class AllMembersForEventLoadedAction {
 class SaveMembersForEventAction {
   final String event;
   final List<String> members;
+  final List<String> notMembers;
 
-  SaveMembersForEventAction({this.event, this.members});
+  SaveMembersForEventAction({this.event, this.members, this.notMembers});
 }
