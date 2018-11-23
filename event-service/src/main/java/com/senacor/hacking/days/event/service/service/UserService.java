@@ -38,6 +38,7 @@ public class UserService {
     private User map(com.senacor.hacking.days.event.service.repository.domain.User user) {
         return User.builder()
                 .uuid(user.getId())
+                .username(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .build();
@@ -46,6 +47,7 @@ public class UserService {
     private com.senacor.hacking.days.event.service.repository.domain.User map(User user) {
         return com.senacor.hacking.days.event.service.repository.domain.User.builder()
                 .id(user.getUuid())
+                .username(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .build();

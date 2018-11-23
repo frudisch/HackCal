@@ -45,12 +45,4 @@ public class MemberService {
             userRepository.findAndReplaceUser(member, user);
         });
     }
-
-    private com.senacor.hacking.days.event.service.handler.port.User mapUser(User user) {
-        return com.senacor.hacking.days.event.service.handler.port.User.builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .uuid(user.getId())
-                .build();
-    }
 }
