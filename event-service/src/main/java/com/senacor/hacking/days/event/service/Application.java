@@ -9,11 +9,16 @@ import com.senacor.hacking.days.event.service.repository.MongoDB;
 import com.senacor.hacking.days.event.service.service.EventService;
 import com.senacor.hacking.days.event.service.service.MemberService;
 import com.senacor.hacking.days.event.service.service.UserService;
+import io.helidon.common.http.DataChunk;
+import io.helidon.common.reactive.Flow;
 import io.helidon.webserver.Routing;
 import io.helidon.webserver.ServerConfiguration;
 import io.helidon.webserver.WebServer;
+import io.helidon.webserver.json.JsonSupport;
 import lombok.Getter;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -47,6 +52,12 @@ public class Application {
 
     private Routing createRouting() {
         return Routing.builder()
+                .register(JsonSupport.get())
+                .error(Exception.class, (req, res, ex) -> {
+                    ex.printStackTrace();
+                    res.status(400).send(Json.createObjectBuilder()
+                            .add("Fehler", ex.getMessage()).build());
+                })
                 .register("/event", eventHandler)
                 .register("/event/{eventId}/member", memberHandler)
                 .register("/user", userHandler)

@@ -33,10 +33,12 @@ public class MemberHandler implements Service {
 
     private void addMember(ServerRequest serverRequest, ServerResponse serverResponse, JsonObject jsonObject) {
         List<UUID> newMembers = new ArrayList<>();
-        System.out.println(jsonObject.getJsonArray("members"));
+        if (jsonObject.get("members") == null) {
+            serverResponse.status(201).send();
+            return;
+        }
         jsonObject.getJsonArray("members").forEach(data -> newMembers.add(UUID.fromString(data.toString().replaceAll("\"", ""))));
         String eventId = serverRequest.path().absolute().param("eventId");
-        System.out.println(serverRequest.path().absolute());
         memberService.addMembers(UUID.fromString(eventId), newMembers);
         serverResponse.status(201).send();
     }
