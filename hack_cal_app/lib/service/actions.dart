@@ -29,6 +29,18 @@ class AllUserLoadedAction {
   AllUserLoadedAction(this.user);
 }
 
+class CreateUserAction {
+  final User user;
+
+  CreateUserAction(this.user);
+}
+
+class RemoveUserAction {
+  final User user;
+
+  RemoveUserAction(this.user);
+}
+
 class FetchMembersForEvent {
   final String event;
 

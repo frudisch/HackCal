@@ -31,6 +31,14 @@ void storeEventsMiddleware(Store<AppState> store, action, NextDispatcher next) {
     loadUser()
         .then((state) => store.dispatch(AllUserLoadedAction(state.userList)));
   }
+  if (action is CreateUserAction) {
+    createUser(action.user)
+        .catchError(() => store.dispatch(FetchAllUserAction()));
+  }
+  if (action is RemoveUserAction) {
+    removeUser(action.user)
+        .catchError(() => store.dispatch(FetchAllUserAction()));
+  }
 
   if (action is FetchMembersForEvent) {
     String uuid = action.event;
@@ -91,6 +99,25 @@ Future<AppState> loadUser() async {
     return AppState.fromJson(user: user);
   }
   return Future.error('Failed to load: GET $userUrl');
+}
+
+Future<void> createUser(User user) async {
+  final response = await http.post(userUrl, body: json.encode(user.toJson()));
+
+  if (response.statusCode == 201) {
+    return Future.value();
+  }
+  return Future.error('Failed to load: POST $userUrl');
+}
+
+Future<void> removeUser(User user) async {
+  final String url = '$userUrl/${user.uuid}';
+  final response = await http.delete(url);
+
+  if (response.statusCode == 204) {
+    return Future.value();
+  }
+  return Future.error('Failed to load: DELETE $url');
 }
 
 Future<AppState> loadMember(String eventUuid) async {

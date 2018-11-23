@@ -8,8 +8,10 @@ class TextInputFieldWidget extends StatelessWidget {
 
   final String name;
   final bool required;
+  final ValidatorFunction validator;
 
-  TextInputFieldWidget({this.name, this.required = true});
+  TextInputFieldWidget(
+      {this.name, this.required = true, this.validator = null});
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +26,14 @@ class TextInputFieldWidget extends StatelessWidget {
           controller: _controller,
           textCapitalization: TextCapitalization.sentences,
           style: _inputFontStyle,
-          validator: required
-              ? (value) {
-                  if (value.isEmpty) {
-                    return 'Bitte gebe einen Wert an.';
-                  }
-                }
-              : null,
+          validator: (value) {
+            if (required && value.isEmpty) {
+              return 'Bitte gebe einen Wert an.';
+            }
+            if (validator != null) {
+              return validator(value);
+            }
+          },
         ),
       ],
     );
@@ -40,3 +43,5 @@ class TextInputFieldWidget extends StatelessWidget {
     return _controller.text.isEmpty ? null : _controller.text;
   }
 }
+
+typedef ValidatorFunction = Function(String value);

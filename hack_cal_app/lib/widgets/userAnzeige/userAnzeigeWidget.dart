@@ -1,36 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:hack_cal_app/model/appstate.dart';
-import 'package:hack_cal_app/model/event.dart';
+import 'package:hack_cal_app/model/user.dart';
 import 'package:hack_cal_app/service/actions.dart';
-import 'package:hack_cal_app/widgets/eventEintrag/eventEintragWidget.dart';
-import 'package:hack_cal_app/widgets/neuesEvent/neuesEventWidget.dart';
+import 'package:hack_cal_app/widgets/neuerUser/neuerUserWidget.dart';
+import 'package:hack_cal_app/widgets/userEintrag/userEintragWidget.dart';
 import "package:pull_to_refresh/pull_to_refresh.dart";
 import 'package:redux/redux.dart';
 
-class AnzeigeWidget extends StatelessWidget {
+class UserAnzeigeWidget extends StatelessWidget {
   final Store<AppState> store;
   final RefreshController _refreshController = RefreshController();
 
-  AnzeigeWidget(this.store);
+  UserAnzeigeWidget(this.store);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Hack Calendar'),
-      ),
-      body: _buildEventList(),
+      body: _buildUserList(),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () => _openNeuesEventDialog(context),
+        onPressed: () => _openNeuerUserDialog(context),
       ),
     );
   }
 
-  _buildEventList() {
-    return StoreConnector<AppState, List<Event>>(
-      converter: (store) => store.state.eventList,
+  _buildUserList() {
+    return StoreConnector<AppState, List<User>>(
+      converter: (store) => store.state.userList,
       builder: (context, list) {
         return Padding(
             padding: const EdgeInsets.only(top: 5.0),
@@ -39,7 +36,7 @@ class AnzeigeWidget extends StatelessWidget {
               enablePullUp: false,
               controller: _refreshController,
               onRefresh: (up) {
-                store.dispatch(FetchAllEventsAction());
+                store.dispatch(FetchAllUserAction());
                 _refreshController.sendBack(up, RefreshStatus.completed);
               },
               child: ListView.builder(
@@ -49,14 +46,14 @@ class AnzeigeWidget extends StatelessWidget {
                       return const Divider();
                     }
                     final int index = i ~/ 2;
-                    return EventEintragWidget(list[index]);
+                    return UserEintragWidget(list[index]);
                   }),
             ));
       },
     );
   }
 
-  _openNeuesEventDialog(BuildContext context) {
-    showDialog(context: context, builder: (context) => NeuesEventWidget());
+  _openNeuerUserDialog(BuildContext context) {
+    showDialog(context: context, builder: (context) => NeuerUserWidget());
   }
 }

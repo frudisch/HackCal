@@ -4,9 +4,9 @@ import 'package:hack_cal_app/model/appstate.dart';
 import 'package:hack_cal_app/service/actions.dart';
 import 'package:hack_cal_app/service/middleware.dart';
 import 'package:hack_cal_app/service/reducers.dart';
+import 'package:hack_cal_app/widgets/eventAnzeige/eventAnzeigeWidget.dart';
+import 'package:hack_cal_app/widgets/userAnzeige/userAnzeigeWidget.dart';
 import 'package:redux/redux.dart';
-
-import 'widgets/anzeige/anzeigeWidget.dart';
 
 void main() {
   final store = Store<AppState>(appStateReducers,
@@ -30,11 +30,31 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: StoreBuilder<AppState>(
-            onInit: (store) {
-              store.dispatch(FetchAllEventsAction());
-              store.dispatch(FetchAllUserAction());
-            },
-            builder: (context, store) => AnzeigeWidget(store)),
+          onInit: (store) {
+            store.dispatch(FetchAllEventsAction());
+            store.dispatch(FetchAllUserAction());
+          },
+          builder: (context, store) => DefaultTabController(
+                length: 2,
+                child: Scaffold(
+                  appBar: AppBar(
+                    bottom: TabBar(
+                      tabs: [
+                        Tab(icon: Icon(Icons.event)),
+                        Tab(icon: Icon(Icons.people)),
+                      ],
+                    ),
+                    title: Text('Hack Calendar'),
+                  ),
+                  body: TabBarView(
+                    children: [
+                      EventAnzeigeWidget(store),
+                      UserAnzeigeWidget(store),
+                    ],
+                  ),
+                ),
+              ),
+        ),
       ),
     );
   }

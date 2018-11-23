@@ -15,6 +15,12 @@ AppState appStateReducers(AppState state, dynamic action) {
   if (action is AllUserLoadedAction) {
     return loadUser(state, action);
   }
+  if (action is CreateUserAction) {
+    return createUser(state, action);
+  }
+  if (action is RemoveUserAction) {
+    return removeUser(state, action);
+  }
 
   if (action is AllMembersForEventLoadedAction) {
     return loadMember(state, action);
@@ -47,6 +53,16 @@ AppState loadUser(AppState state, AllUserLoadedAction action) {
       eventList: state.eventList,
       members: state.members,
       userList: action.user);
+}
+
+AppState createUser(AppState state, CreateUserAction action) {
+  state.userList.add(action.user);
+  return state;
+}
+
+AppState removeUser(AppState state, RemoveUserAction action) {
+  state.userList.remove(action.user);
+  return state;
 }
 
 AppState loadMember(AppState state, AllMembersForEventLoadedAction action) {
