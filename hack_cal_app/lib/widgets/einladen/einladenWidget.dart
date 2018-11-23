@@ -49,8 +49,10 @@ class EinladenDialogWidget extends StatelessWidget {
         ),
       ),
       floatingActionButton: new FloatingActionButton(
-        onPressed: () =>
-            callback(event, _einladenTeilnehmerWidget.getTeilnehmer()),
+        onPressed: () {
+          callback(event, _einladenTeilnehmerWidget.getTeilnehmer());
+          Navigator.pop(context);
+        },
         tooltip: 'Teilnehmer speichern',
         child: new Icon(Icons.save),
       ),

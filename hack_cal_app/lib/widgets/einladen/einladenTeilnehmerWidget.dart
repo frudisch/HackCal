@@ -8,7 +8,7 @@ import 'package:hack_cal_app/widgets/einladen/einladenViewModel.dart';
 
 class EinladenTeilnehmerWidget extends StatelessWidget {
   final Event event;
-  EinladenTeilnehmerDialogWidget _einladenTeilnehmerDialogWidget;
+  EinladenViewModel model;
 
   EinladenTeilnehmerWidget(this.event);
 
@@ -20,13 +20,13 @@ class EinladenTeilnehmerWidget extends StatelessWidget {
           alleUser: store.state.userList,
           teilnehmer: store.state.fullMembers(event.uuid));
     }, builder: (context, model) {
-      _einladenTeilnehmerDialogWidget = EinladenTeilnehmerDialogWidget(model);
-      return _einladenTeilnehmerDialogWidget;
+      this.model = model;
+      return EinladenTeilnehmerDialogWidget(model);
     });
   }
 
   List<User> getTeilnehmer() {
-    return _einladenTeilnehmerDialogWidget.getTeilnehmer();
+    return model.teilnehmer;
   }
 }
 
@@ -36,11 +36,7 @@ class EinladenTeilnehmerDialogWidget extends StatefulWidget {
   EinladenTeilnehmerDialogWidget(this.model);
 
   @override
-  State<StatefulWidget> createState() => EinladenTeilnehmerDialogState(model);
-
-  List<User> getTeilnehmer() {
-    return model.teilnehmer;
-  }
+  State<StatefulWidget> createState() => EinladenTeilnehmerDialogState();
 }
 
 class EinladenTeilnehmerDialogState
@@ -50,12 +46,11 @@ class EinladenTeilnehmerDialogState
   final TextStyle _font = TextStyle(fontSize: 18.0, color: Colors.black);
 
   final GlobalKey<AutoCompleteTextFieldState<User>> key = GlobalKey();
-  final EinladenViewModel model;
 
   String currentUserName = "";
   AutoCompleteTextField textField;
 
-  EinladenTeilnehmerDialogState(this.model);
+  EinladenTeilnehmerDialogState();
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +62,7 @@ class EinladenTeilnehmerDialogState
         style: _font,
         submitOnSuggestionTap: true,
         clearOnSubmit: true,
-        suggestions: model.alleUser,
+        suggestions: widget.model.alleUser,
         textInputAction: TextInputAction.go,
         textChanged: (item) => currentUserName = item,
         textSubmitted: _submit,
@@ -80,15 +75,16 @@ class EinladenTeilnehmerDialogState
         },
         itemFilter: (item, query) {
           return item.username.toLowerCase().startsWith(query.toLowerCase()) &&
-              !model.teilnehmer.contains(item);
+              !widget.model.teilnehmer.contains(item);
         });
 
     Widget teilnehmer = Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children:
-              model.teilnehmer.map((user) => _buildUserWidget(user)).toList(),
+          children: widget.model.teilnehmer
+              .map((user) => _buildUserWidget(user))
+              .toList(),
         ));
 
     return Column(
@@ -114,7 +110,7 @@ class EinladenTeilnehmerDialogState
           icon: Icon(Icons.remove),
           onPressed: () {
             setState(() {
-              model.teilnehmer.remove(user);
+              widget.model.teilnehmer.remove(user);
             });
           },
         ),
@@ -128,7 +124,7 @@ class EinladenTeilnehmerDialogState
 
   _submit(String username) {
     User current = null;
-    model.alleUser.forEach((u) {
+    widget.model.alleUser.forEach((u) {
       if (u.username == username) {
         current = u;
       }
@@ -138,7 +134,7 @@ class EinladenTeilnehmerDialogState
     }
 
     setState(() {
-      model.teilnehmer.add(current);
+      widget.model.teilnehmer.add(current);
       currentUserName = null;
       textField.clear();
     });
