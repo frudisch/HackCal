@@ -13,19 +13,11 @@ class AppState {
   AppState({this.eventList, this.members, this.userList});
 
   factory AppState.fromJson(
-      {List<dynamic> events,
+      {List<Event> events,
       Map<String, List<String>> members,
-      List<dynamic> user}) {
-    List<Event> eventList = events == null
-        ? []
-        : events
-            .map((i) => new Event.fromJson(i as Map<String, dynamic>))
-            .toList();
-    List<User> userList = user == null
-        ? []
-        : user
-            .map((i) => new User.fromJson(i as Map<String, dynamic>))
-            .toList();
+      List<User> user}) {
+    List<Event> eventList = events == null ? [] : events;
+    List<User> userList = user == null ? [] : user;
     Map<String, List<String>> memberMap = members == null ? new Map() : members;
 
     return AppState(
@@ -36,13 +28,13 @@ class AppState {
       {'events': eventList, 'members': members, 'user': userList};
 
   List<User> fullMembers(String uuid) {
-    List<String> member = members[uuid];
+    List<String> member = members != null ? members[uuid] : null;
     if (member == null) {
       return [];
     }
     return member
         .map((uuid) => userList.firstWhere((u) => u.uuid == uuid,
-            orElse: () => User(uuid: uuid, name: '<unbekannt:${uuid}>')))
+            orElse: () => User(uuid: uuid, username: '<unbekannt:$uuid>')))
         .toList();
   }
 

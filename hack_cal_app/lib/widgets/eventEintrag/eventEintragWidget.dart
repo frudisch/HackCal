@@ -5,6 +5,7 @@ import 'package:hack_cal_app/model/appstate.dart';
 import 'package:hack_cal_app/model/event.dart';
 import 'package:hack_cal_app/service/actions.dart';
 import 'package:hack_cal_app/widgets/einladen/einladenWidget.dart';
+import 'package:hack_cal_app/widgets/eventEintrag/eventEintragModel.dart';
 
 class EventEintragWidget extends StatelessWidget {
   final Event event;
@@ -13,10 +14,13 @@ class EventEintragWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<AppState, OnDeleteCallback>(converter: (store) {
-      return (event) => store.dispatch(RemoveEventAction(event));
-    }, builder: (context, deleteCallback) {
-      return EventEintragDialogWidget(event, deleteCallback: deleteCallback);
+    return new StoreConnector<AppState, EventEintragModel>(converter: (store) {
+      return EventEintragModel(
+          deleteCallback: (event) => store.dispatch(RemoveEventAction(event)),
+          einladenClick: () =>
+              store.dispatch(FetchMembersForEvent(event.uuid)));
+    }, builder: (context, model) {
+      return EventEintragDialogWidget(event, model: model);
     });
   }
 }
@@ -25,9 +29,9 @@ class EventEintragDialogWidget extends StatelessWidget {
   final TextStyle _biggerFont = const TextStyle(fontSize: 22.0);
 
   final Event event;
-  final OnDeleteCallback deleteCallback;
+  final EventEintragModel model;
 
-  EventEintragDialogWidget(this.event, {this.deleteCallback});
+  EventEintragDialogWidget(this.event, {this.model});
 
   @override
   Widget build(BuildContext context) {
@@ -62,15 +66,14 @@ class EventEintragDialogWidget extends StatelessWidget {
           caption: 'Löschen',
           color: Colors.red,
           icon: Icons.delete,
-          onTap: () => deleteCallback(event),
+          onTap: () => model.deleteCallback(event),
         ),
       ],
     );
   }
 
   _openEinladenDialog(BuildContext context) {
+    model.einladenClick();
     showDialog(context: context, builder: (context) => EinladenWidget(event));
   }
 }
-
-typedef OnDeleteCallback = Function(Event event);

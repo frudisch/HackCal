@@ -1,25 +1,30 @@
 class User {
   final String uuid;
-  final String name;
+  final String username;
+  final String firstName;
+  final String lastName;
 
-  User({this.uuid, this.name});
+  User({this.uuid, this.username, this.firstName, this.lastName});
 
-  int compareTo(User other) => name.compareTo(other.name);
+  int compareTo(User other) => username.compareTo(other.username);
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      uuid: json['uuid'],
-      name: json['name'],
-    );
+        uuid: json['uuid'],
+        username: json['username'],
+        firstName: json['firstName'],
+        lastName: json['lastName']);
   }
 
   Map<String, dynamic> toJson() => {
         'uuid': uuid,
-        'name': name,
+        'username': username,
+        'firstName': firstName,
+        'lastName': lastName
       };
 
   @override
   String toString() {
-    return name;
+    return username;
   }
 }

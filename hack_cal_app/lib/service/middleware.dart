@@ -2,11 +2,14 @@ import 'dart:convert';
 
 import 'package:hack_cal_app/model/appstate.dart';
 import 'package:hack_cal_app/model/event.dart';
+import 'package:hack_cal_app/model/user.dart';
 import 'package:hack_cal_app/service/actions.dart';
 import 'package:http/http.dart' as http;
 import 'package:redux/redux.dart';
 
-final String eventUrl = 'http://4096e195.ngrok.io/event';
+final String baseUrl = 'http://fe31eea2.ngrok.io';
+final String eventUrl = '$baseUrl/event';
+final String userUrl = '$baseUrl/user';
 
 void storeEventsMiddleware(Store<AppState> store, action, NextDispatcher next) {
   next(action);
@@ -45,9 +48,13 @@ Future<AppState> loadEvents() async {
   final response = await http.get(eventUrl);
 
   if (response.statusCode == 200) {
-    return AppState.fromJson(events: json.decode(response.body));
+    List<Event> events = [];
+    json.decode(response.body).forEach((i) {
+      events.add(Event.fromJson(i as Map<String, dynamic>));
+    });
+    return AppState.fromJson(events: events);
   }
-  return Future.error('Failed to load: GET ${eventUrl}');
+  return Future.error('Failed to load: GET $eventUrl');
 }
 
 Future<void> createEvent(Event event) async {
@@ -56,7 +63,7 @@ Future<void> createEvent(Event event) async {
   if (response.statusCode == 201) {
     return Future.value();
   }
-  return Future.error('Failed to load: POST ${eventUrl}');
+  return Future.error('Failed to load: POST $eventUrl');
 }
 
 Future<void> removeEvent(Event event) async {
@@ -66,36 +73,46 @@ Future<void> removeEvent(Event event) async {
   if (response.statusCode == 204) {
     return Future.value();
   }
-  return Future.error('Failed to load: DELETE ${url}');
+  return Future.error('Failed to load: DELETE $url');
 }
 
 Future<AppState> loadUser() async {
-  final response = await http.get(eventUrl);
+  final response = await http.get(userUrl);
 
   if (response.statusCode == 200) {
-    return AppState.fromJson(user: json.decode(response.body));
+    List<User> user = [];
+    json.decode(response.body).forEach((i) {
+      user.add(User.fromJson(i as Map<String, dynamic>));
+    });
+    return AppState.fromJson(user: user);
   }
-  return Future.error('Failed to load: GET ${eventUrl}');
+  return Future.error('Failed to load: GET $userUrl');
 }
 
 Future<AppState> loadMember(String eventUuid) async {
-  String url = '${eventUrl}/${eventUuid}/member';
+  String url = '$eventUrl/$eventUuid/member';
   final response = await http.get(url);
 
   if (response.statusCode == 200) {
+    var object = json.decode(response.body);
+    List<String> member = [];
+    object['member'].forEach((i) {
+      member.add(i);
+    });
+
     Map<String, List<String>> map = new Map();
-    map[eventUuid] = json.decode(response.body);
+    map[object['event']] = member;
     return AppState.fromJson(members: map);
   }
-  return Future.error('Failed to load: GET ${url}');
+  return Future.error('Failed to load: GET $url');
 }
 
 Future<void> saveMember(String eventUuid, List<String> member) async {
-  String url = '${eventUrl}/${eventUuid}/member';
-  final response = await http.post(url, body: json.encode(member));
+  String url = '$eventUrl/$eventUuid/member';
+  final response = await http.post(url, body: json.encode({"members": member}));
 
   if (response.statusCode == 201) {
     return Future.value();
   }
-  return Future.error('Failed to load: POST ${url}');
+  return Future.error('Failed to load: POST $url');
 }

@@ -50,11 +50,17 @@ AppState loadUser(AppState state, AllUserLoadedAction action) {
 }
 
 AppState loadMember(AppState state, AllMembersForEventLoadedAction action) {
-  state.members[action.event] = action.members;
-  return state;
+  Map<String, List<String>> members =
+      state.members != null ? state.members : new Map();
+  members[action.event] = action.members;
+  return AppState(
+      eventList: state.eventList, members: members, userList: state.userList);
 }
 
 AppState saveMember(AppState state, SaveMembersForEventAction action) {
-  state.members[action.event] = action.members;
-  return state;
+  Map<String, List<String>> members =
+      state.members != null ? state.members : new Map();
+  members[action.event] = action.members;
+  return AppState(
+      eventList: state.eventList, members: members, userList: state.userList);
 }
